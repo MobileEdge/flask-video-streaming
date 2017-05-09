@@ -2,10 +2,14 @@
 from flask import Flask, render_template, Response
 
 # emulated camera
-from camera import Camera
+#from camera import Camera
+
+
 
 # Raspberry Pi camera module (requires picamera package)
-# from camera_pi import Camera
+from camera_pi import Camera
+
+from camera_pi_opencv import Camera_cv
 
 app = Flask(__name__)
 
@@ -29,6 +33,14 @@ def video_feed():
     """Video streaming route. Put this in the src attribute of an img tag."""
     return Response(gen(Camera()),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
+
+
+@app.route('/decoded')
+def decode():
+    streamurl = str(sys.argv[2])
+    stream = urllib.urlopen(streamurl)
+    from flask import stream_with_context
+    return Response(stream_with_context(Camera_cv()))
 
 
 if __name__ == '__main__':
