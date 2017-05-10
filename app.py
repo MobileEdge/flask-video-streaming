@@ -27,6 +27,10 @@ def gen(camera):
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
+def yeld_decoded(camera_pi):
+    while True:
+	yield ("[start]" + camera_pi.get_frame() + "[finish]")
+
 
 @app.route('/video_feed')
 def video_feed():
@@ -37,10 +41,8 @@ def video_feed():
 
 @app.route('/decoded')
 def decode():
-    streamurl = str(sys.argv[2])
-    stream = urllib.urlopen(streamurl)
     from flask import stream_with_context
-    return Response(stream_with_context(Camera_cv()))
+    return Response(stream_with_context(yeld_decoded(Camera_cv())))
 
 
 if __name__ == '__main__':

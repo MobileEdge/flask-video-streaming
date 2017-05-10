@@ -3,7 +3,8 @@ import io
 import threading
 import picamera
 import pickle
-
+import cv2
+import numpy as np
 
 class Camera_cv(object):
     thread = None  # background thread that reads frames from camera
@@ -11,17 +12,17 @@ class Camera_cv(object):
     last_access = 0  # time of last client access to the camera
 
     def initialize(self):
-        if Camera.thread is None:
+        if Camera_cv.thread is None:
             # start background frame thread
-            Camera.thread = threading.Thread(target=self._thread)
-            Camera.thread.start()
+            Camera_cv.thread = threading.Thread(target=self._thread)
+            Camera_cv.thread.start()
 
             # wait until frames start to be available
             while self.frame is None:
                 time.sleep(0)
 
     def get_frame(self):
-        Camera.last_access = time.time()
+        Camera_cv.last_access = time.time()
         self.initialize()
         return self.frame
 
